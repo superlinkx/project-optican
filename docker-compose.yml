@@ -1,9 +1,9 @@
 api:
-  build: ./api
+  build: ./
   ports:
     - 3000:3000
   volumes:
-    - ./api:/go/src/github.com/superlinkx/project-healthpack/api
+    - ./:/go/src/github.com/superlinkx/project-healthpack
   links:
     - database
   environment:
