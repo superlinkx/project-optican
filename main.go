@@ -2,15 +2,37 @@ package main
 
 import (
 	"fmt"
-	"html"
-	"log"
-	"net/http"
+	"os"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang/glog"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/joho/godotenv/autoload"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-	})
 
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	cs := fmt.Sprintf("host=%s user=%s password=%s dbname=healthpack sslmode=disable",
+		os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"))
+	r := gin.Default()
+
+	db, err := gorm.Open("postgres", cs)
+	for err != nil {
+		time.Sleep(time.Second)
+		glog.Error("Couldn't connect due to error: ", err)
+		db, err = gorm.Open("postgres", cs)
+	}
+	defer db.Close()
+
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message":        "pong",
+			"error":          err,
+			"connection_str": cs,
+		})
+	})
+	r.Run(":" + os.Getenv("APP_PORT"))
 }

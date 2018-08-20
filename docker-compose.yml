@@ -1,16 +1,23 @@
-api:
-  build: ./
-  ports:
-    - 3000:3000
-  volumes:
-    - ./:/go/src/github.com/superlinkx/project-healthpack
-  links:
-    - database
-  environment:
-    - DB_NAME=project-healthpack
-  
-database:
-  image: postgres
-  restart: always
-  environment:
-    POSTGRES_PASSWORD: healthpack
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+  api:
+    build: ./
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/go/src/github.com/superlinkx/project-healthpack
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - APP_PORT=3000
