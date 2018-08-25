@@ -31,11 +31,7 @@ type RecordType struct {
 }
 
 func main() {
-	setDB()
-	gormdb, err := gorm.Open("postgres", db)
-	if err != nil {
-		glog.Error("Gorm failed to connect: ", err)
-	}
+	gormdb := setDB()
 	runMigrations(gormdb)
 
 	var recordType RecordType
@@ -57,7 +53,7 @@ func main() {
 	r.Run(":" + os.Getenv("APP_PORT"))
 }
 
-func setDB() {
+func setDB() *gorm.DB {
 	var err error
 	cs := fmt.Sprintf("host=%s user=%s password=%s dbname=healthpack sslmode=disable",
 		os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"))
@@ -67,6 +63,13 @@ func setDB() {
 		glog.Error("Couldn't connect due to error: ", err)
 		db, err = sql.Open("postgres", cs)
 	}
+	gormdb, err := gorm.Open("postgres", db)
+	for err != nil {
+		time.Sleep(time.Second)
+		glog.Error("Couldn't connect due to error: ", err)
+		gormdb, err = gorm.Open("postgres", db)
+	}
+	return gormdb
 }
 
 func runMigrations(gormdb *gorm.DB) {
