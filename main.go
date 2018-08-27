@@ -19,8 +19,12 @@ var db *sql.DB
 // Record Entity used to describe a health record
 type Record struct {
 	gorm.Model
-	RecordTypeID uint
+	Amount       float32    `json:"amount"`
+	Note         string     `json:"note"`
+	RecordTime   time.Time  `json:"record_time"`
+	RecordTypeID uint       `json:"record_type_id"`
 	RecordType   RecordType `json:"record_type"`
+	Tags         []Tag      `gorm:"many2many:record_tags;" json:"tags"`
 }
 
 // RecordType Entity used for describing types of records
@@ -30,16 +34,27 @@ type RecordType struct {
 	Units string `json:"units"`
 }
 
+// Tag Entity used to store tags
+type Tag struct {
+	gorm.Model
+	Name string `json:"name"`
+}
+
 func main() {
 	gormdb := setDB()
 	runMigrations(gormdb)
 
 	var recordType RecordType
 	var record []Record
+	var tag Tag
+	var tags []Tag
+	gormdb.Create(&Tag{Name: "Test1"})
 	gormdb.Create(&RecordType{Name: "Name", Units: "em"})
+	gormdb.First(&tag, 1)
+	tags = append(tags, tag)
 	gormdb.First(&recordType, 1)
-	gormdb.Create(&Record{RecordType: recordType})
-	gormdb.Preload("RecordType").Find(&record)
+	gormdb.Create(&Record{RecordType: recordType, Tags: tags, Amount: 0.01, Note: "Hello", RecordTime: time.Now()})
+	gormdb.Preload("RecordType").Preload("Tags").Find(&record)
 
 	r := gin.Default()
 
@@ -73,6 +88,11 @@ func setDB() *gorm.DB {
 }
 
 func runMigrations(gormdb *gorm.DB) {
+	gormdb.DropTable("record_tags")
+	gormdb.DropTable(&Record{})
+	gormdb.DropTable(&RecordType{})
+	gormdb.DropTable(&Tag{})
+	gormdb.AutoMigrate(&Tag{})
 	gormdb.AutoMigrate(&RecordType{})
 	gormdb.AutoMigrate(&Record{})
 	gormdb.Model(&Record{}).AddForeignKey("record_type_id", "record_types(id)", "RESTRICT", "RESTRICT")
