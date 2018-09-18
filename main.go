@@ -8,14 +8,13 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
-	"github.com/superlinkx/project-healthpack/api"
 	"github.com/superlinkx/project-healthpack/db"
 	"github.com/superlinkx/project-healthpack/entities"
 )
 
 func main() {
 	gormdb := db.SetDB()
-	api.RunMigrations(gormdb)
+	db.RunMigrationsUp(gormdb)
 
 	var recordType entities.RecordType
 	var record []entities.Record
@@ -26,7 +25,7 @@ func main() {
 	gormdb.First(&tag, 1)
 	tags = append(tags, tag)
 	gormdb.First(&recordType, 1)
-	gormdb.Create(&entities.Record{RecordType: recordType, Tags: tags, Amount: 0.01, Note: "Hellot", RecordTime: time.Now()})
+	gormdb.Create(&entities.Record{RecordType: recordType, Tags: tags, Amount: 0.01, Note: "Hello World", RecordTime: time.Now()})
 	gormdb.Preload("RecordType").Preload("Tags").Find(&record)
 
 	r := gin.Default()
