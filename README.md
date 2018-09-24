@@ -1,11 +1,11 @@
-# project-healthpack
+# project-optican
 Personal API project for tracking health stats
 
 # Getting Started
 You'll need to create a .env file for local development options. The variables needed are:
 ```
-DB_USER=healthpack
-DB_PASSWORD=healthpack
+DB_USER=optican
+DB_PASSWORD=optican
 DB_HOST=localhost
 APP_PORT=8080
 ```
