@@ -13,7 +13,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./:/go/src/github.com/superlinkx/project-healthpack
+      - ./:/go/src/github.com/superlinkx/project-optican
     depends_on:
       - db
     environment:

@@ -12,7 +12,7 @@ import (
 
 // SetDB sets up connection to db
 func SetDB() *gorm.DB {
-	cs := fmt.Sprintf("host=%s user=%s password=%s dbname=healthpack sslmode=disable",
+	cs := fmt.Sprintf("host=%s user=%s password=%s dbname=optican sslmode=disable",
 		os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"))
 	db, err := sql.Open("postgres", cs)
 	for err != nil {

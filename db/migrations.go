@@ -2,7 +2,7 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/superlinkx/project-healthpack/entities"
+	"github.com/superlinkx/project-optican/entities"
 )
 
 // RunMigrationsUp migrates the app to current

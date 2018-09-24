@@ -8,8 +8,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
-	"github.com/superlinkx/project-healthpack/db"
-	"github.com/superlinkx/project-healthpack/entities"
+	"github.com/superlinkx/project-optican/db"
+	"github.com/superlinkx/project-optican/entities"
 )
 
 func main() {
